@@ -1,3 +1,18 @@
 spring:
   application:
     name: task-pilot
+  datasource:
+    url: jdbc:h2:mem:taskpilot;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+
+app:
+  jwt:
+    secret: "my-very-secret-key-that-is-at-least-32-bytes-long-for-hs256"
+    access-ttl: 900
+    refresh-ttl: 604800
