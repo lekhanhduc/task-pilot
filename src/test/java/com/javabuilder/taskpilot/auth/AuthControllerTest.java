@@ -1,7 +1,9 @@
 package com.javabuilder.taskpilot.auth;
 
-import com.javabuilder.taskpilot.user.User;
-import com.javabuilder.taskpilot.user.UserRepository;
+import com.javabuilder.taskpilot.entity.User;
+import com.javabuilder.taskpilot.entity.RefreshToken;
+import com.javabuilder.taskpilot.repository.UserRepository;
+import com.javabuilder.taskpilot.repository.RefreshTokenRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
