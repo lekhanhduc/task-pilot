@@ -1,7 +1,8 @@
 package com.javabuilder.taskpilot.auth;
 
-import com.javabuilder.taskpilot.user.User;
-import com.javabuilder.taskpilot.user.UserRepository;
+import com.javabuilder.taskpilot.entity.User;
+import com.javabuilder.taskpilot.repository.UserRepository;
+import com.javabuilder.taskpilot.repository.RefreshTokenRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,7 +162,7 @@ class AuthControllerTest {
         String rawRefreshToken = extractField(responseJson, "refreshToken");
 
         // Verify that the raw token is NOT stored in the DB
-        List<RefreshToken> tokens = refreshTokenRepository.findAll();
+        List<com.javabuilder.taskpilot.entity.RefreshToken> tokens = refreshTokenRepository.findAll();
         assertThat(tokens).hasSize(1);
         assertThat(tokens.get(0).getTokenHash()).isNotEqualTo(rawRefreshToken);
 

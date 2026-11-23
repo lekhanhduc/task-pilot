@@ -1,9 +1,2 @@
 package com.javabuilder.taskpilot.auth;
-
-public record LoginResponse(
-        String accessToken,
-        String refreshToken,
-        String tokenType,
-        long expiresIn
-) {
-}
+// Removed: moved to com.javabuilder.taskpilot.dto.response.LoginResponse
