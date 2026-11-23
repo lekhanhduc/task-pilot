@@ -1,6 +1,4 @@
 package com.javabuilder.taskpilot.auth;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
-}
+// Moved to com.javabuilder.taskpilot.repository.RefreshTokenRepository
+// This file is kept empty intentionally

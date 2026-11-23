@@ -1,9 +1,4 @@
 package com.javabuilder.taskpilot.auth;
 
-public record LoginResponse(
-        String accessToken,
-        String refreshToken,
-        String tokenType,
-        long expiresIn
-) {
-}
+// Moved to com.javabuilder.taskpilot.dto.response.LoginResponse
+// This file is kept empty intentionally

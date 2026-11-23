@@ -1,7 +1,5 @@
 package com.javabuilder.taskpilot.exception;
 
-import com.javabuilder.taskpilot.auth.AccountDisabledException;
-import com.javabuilder.taskpilot.auth.InvalidCredentialsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
