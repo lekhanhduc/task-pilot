@@ -89,7 +89,6 @@ class AuthControllerTest {
                 .andReturn();
 
         String responseJson = loginResult.getResponse().getContentAsString();
-        // Extract accessToken from JSON manually to avoid Jackson version issues
         String accessToken = extractField(responseJson, "accessToken");
 
         mockMvc.perform(get("/api/hello")
@@ -162,12 +161,10 @@ class AuthControllerTest {
         String responseJson = loginResult.getResponse().getContentAsString();
         String rawRefreshToken = extractField(responseJson, "refreshToken");
 
-        // Verify that the raw token is NOT stored in the DB
         List<RefreshToken> tokens = refreshTokenRepository.findAll();
         assertThat(tokens).hasSize(1);
         assertThat(tokens.get(0).getTokenHash()).isNotEqualTo(rawRefreshToken);
 
-        // Verify the hash matches what we expect
         java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(rawRefreshToken.getBytes(java.nio.charset.StandardCharsets.UTF_8));
         String expectedHash = java.util.Base64.getEncoder().encodeToString(hash);
@@ -191,6 +188,50 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 .andExpect(status().isForbidden());
+    }
+
+    // --- New tests for 401/403 JSON handlers ---
+
+    @Test
+    void noToken_returns401Json() throws Exception {
+        mockMvc.perform(get("/api/hello"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.title").value("Unauthorized"));
+    }
+
+    @Test
+    void invalidToken_returns401Json() throws Exception {
+        mockMvc.perform(get("/api/hello")
+                .header("Authorization", "Bearer this.is.not.a.valid.token"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.title").value("Unauthorized"));
+    }
+
+    @Test
+    void validTokenMissingRole_returns403Json() throws Exception {
+        // Login as ROLE_USER only
+        String body = "{\"email\":\"" + TEST_EMAIL + "\",\"password\":\"" + TEST_PASSWORD + "\"}";
+
+        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseJson = loginResult.getResponse().getContentAsString();
+        String accessToken = extractField(responseJson, "accessToken");
+
+        // /api/admin requires ROLE_ADMIN, ROLE_USER should get 403
+        mockMvc.perform(get("/api/admin")
+                .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(403))
+                .andExpect(jsonPath("$.title").value("Forbidden"));
     }
 
     private String extractField(String json, String fieldName) {
